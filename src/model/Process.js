@@ -1,4 +1,4 @@
-import { StatusProcess } from "./History";
+import { StatusProcess, History } from "./History.js";
 
 export const priorityProcess = Object.freeze({
   BAIXA: "BAIXA",
