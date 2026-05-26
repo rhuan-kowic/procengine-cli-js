@@ -38,18 +38,18 @@ export class ProcessManager {
 
   getMetricsReport() {
     const relatory = {
-      ABERTO: 0,
-      "EM ANDAMENTO": 0,
-      CONCLUÍDO: 0,
-      CANCELADO: 0,
+      [StatusProcess.ABERTO]: 0,
+      [StatusProcess.EM_ANDAMENTO]: 0,
+      [StatusProcess.CONCLUÍDO]: 0,
+      [StatusProcess.CANCELADO]: 0,
     };
 
-    this.#processes.reduce((acc, process) => {
-      if (process.status) {
-        relatory[process.status] += 1;
+    return this.#processes.reduce((acc, process) => {
+      if (acc[process.status] !== undefined) {
+        acc[process.status]++;
       }
 
-      return acc
-    }, 0);
+      return acc;
+    }, relatory);
   }
 }

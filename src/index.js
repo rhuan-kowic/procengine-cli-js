@@ -1,9 +1,23 @@
 import { Process, priorityProcess } from "./model/Process.js";
 import { StatusProcess } from "./model/History.js";
+import { ProcessManager } from "./model/ProcessManager.js";
 
 console.log("=== INICIANDO PROCENGINE CLI ===");
 
 try {
+  const processManager = new ProcessManager();
+
+  processManager.addProcess("Instabilidade no servidor", priorityProcess.ALTA);
+  processManager.addProcess("Configurar a impressora", priorityProcess.BAIXA);
+  processManager.addProcess(
+    "Elaboracao de uma apressentacao da empresa",
+    priorityProcess.MEDIA,
+  );
+  processManager.addProcess(
+    "Implementar feature de emissao de NF-e",
+    priorityProcess.ALTA,
+  );
+
   const processServer = new Process(
     "Instabilidade no servidor",
     priorityProcess.ALTA,
@@ -33,6 +47,20 @@ try {
   processServer.listHistory.forEach((log, index) => {
     console.log(`[Registro: ${index + 1}] ${log.toString()}`);
   });
+  console.log("\n--------------------------------------------------");
+
+  console.log(
+    "Relatorio do ProcessManager:",
+    JSON.stringify(processManager.getMetricsReport(), null, 2),
+  );
+
+  console.log(
+    "Processos atrasados: ",
+    JSON.stringify(processManager.findDelayed(), null, 2) === "[]"
+      ? "Nenhum processo atrasado."
+      : JSON.stringify(processManager.findDelayed(), null, 2),
+  );
+
   console.log("\n--------------------------------------------------");
   console.log(`Teste de erro: Tentando atualizar para o mesmo status...`);
   processServer.changeStatus(
