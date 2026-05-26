@@ -35,4 +35,21 @@ export class ProcessManager {
       return isDateLimit && isOpenOrInProcess;
     });
   }
+
+  getMetricsReport() {
+    const relatory = {
+      ABERTO: 0,
+      "EM ANDAMENTO": 0,
+      CONCLUÍDO: 0,
+      CANCELADO: 0,
+    };
+
+    this.#processes.reduce((acc, process) => {
+      if (process.status) {
+        relatory[process.status] += 1;
+      }
+
+      return acc
+    }, 0);
+  }
 }
