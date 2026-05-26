@@ -1,13 +1,17 @@
 {
   "name": "procengine-cli",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.0.1",
+  "description": "Projeto de linha de comando para gerenciamento de processos, utilizando a classe ProcessManager.",
   "main": "./src/index.js",
   "scripts": {
     "start": "node ./src/index.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "process",
+    "manager",
+    "cli"
+  ],
+  "author": "Rhuan Kowic Santos",
   "license": "ISC",
   "type": "module"
 }
