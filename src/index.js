@@ -1,74 +1,122 @@
 import { Process, priorityProcess } from "./model/Process.js";
 import { StatusProcess } from "./model/History.js";
 import { ProcessManager } from "./model/ProcessManager.js";
+import { ConsoleView } from "./utils/console.js";
+import readline from "readline";
 
-console.log("=== INICIANDO PROCENGINE CLI ===");
+ConsoleView.printHeader();
 
-try {
-  const processManager = new ProcessManager();
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
 
-  processManager.addProcess("Instabilidade no servidor", priorityProcess.ALTA);
-  processManager.addProcess("Configurar a impressora", priorityProcess.BAIXA);
-  processManager.addProcess(
-    "Elaboracao de uma apressentacao da empresa",
-    priorityProcess.MEDIA,
-  );
-  processManager.addProcess(
-    "Implementar feature de emissao de NF-e",
-    priorityProcess.ALTA,
-  );
+const question = (text) => new Promise((resolve) => rl.question(text, resolve));
 
-  const processServer = new Process(
-    "Instabilidade no servidor",
-    priorityProcess.ALTA,
-  );
-  console.log(`\nProcesso criado com sucesso!`);
-  console.log(`ID: ${processServer.id}`);
-  console.log(`Título: ${processServer.title}`);
-  console.log(`Status: ${processServer.status}`);
-  console.log(`Prioridade: ${processServer.priority}`);
-  console.log(`Data de Criação: ${processServer.creationDate}`);
-  console.log(`Data Limite: ${processServer.limitDate}`);
+const processManager = new ProcessManager();
 
-  console.log("\n--------------------------------------------------");
-  processServer.changeStatus(
-    StatusProcess.EM_ANDAMENTO,
-    "Análise iniciada pela equipe de Infraestrutura.",
-  );
-  console.log(`Status atualizado para: ${processServer.status}`);
+async function main() {
+  while (true) {
+    ConsoleView.printMenu();
 
-  processServer.changeStatus(
-    StatusProcess.CONCLUÍDO,
-    "Problema resolvido e monitoramento concluído.",
-  );
-  console.log(`Status atualizado para: ${processServer.status}`);
+    const option = await question("Escolha uma opção: ");
 
-  console.log("\n------------------ HISTÓRICO DE STATUS -----------------");
-  processServer.listHistory.forEach((log, index) => {
-    console.log(`[Registro: ${index + 1}] ${log.toString()}`);
-  });
-  console.log("\n--------------------------------------------------");
+    try {
+      switch (option) {
+        case "1": {
+          ConsoleView.consoleClear();
+          ConsoleView.printHeader();
+          const title = await question("Digite o título do processo: ");
+          const priority = await question(
+            "Digite a prioridade do processo (BAIXA, MEDIA, ALTA): ",
+          );
+          const priorityUpper = priority.toUpperCase();
 
-  console.log(
-    "Relatorio do ProcessManager:",
-    JSON.stringify(processManager.getMetricsReport(), null, 2),
-  );
+          const newProcess = processManager.addProcess(title, priorityUpper);
+          ConsoleView.printSuccess(
+            `Processo "${newProcess.title}" criado com ID ${newProcess.id}`,
+          );
+          break;
+        }
 
-  console.log(
-    "Processos atrasados: ",
-    JSON.stringify(processManager.findDelayed(), null, 2) === "[]"
-      ? "Nenhum processo atrasado."
-      : JSON.stringify(processManager.findDelayed(), null, 2),
-  );
+        case "2": {
+          ConsoleView.consoleClear();
+          ConsoleView.printHeader();
+          console.log("\nLISTA DE PROCESSOS:");
+          const listProcesses = processManager.processes;
 
-  console.log("\n--------------------------------------------------");
-  console.log(`Teste de erro: Tentando atualizar para o mesmo status...`);
-  processServer.changeStatus(
-    StatusProcess.CONCLUÍDO,
-    "Tentativa de atualização para o mesmo status.",
-  );
-} catch (error) {
-  {
-    console.error(`Erro: ${error.message}`);
+          if (listProcesses.length === 0) {
+            console.log("\nNenhum processo encontrado.");
+          } else {
+            listProcesses.forEach((process) =>
+              ConsoleView.printProcess(process),
+            );
+          }
+          break;
+        }
+
+        case "3": {
+          ConsoleView.consoleClear();
+          ConsoleView.printHeader();
+
+          const id = await question("Digite o ID do processo: ");
+          const newStatus = await question(
+            "Digite o novo status do processo (CANCELADO, EM_ANDAMENTO, CONCLUIDO): ",
+          );
+          const justification = await question(
+            "Digite a justificativa para a mudança: ",
+          );
+
+          const newStatusUpper = newStatus.toUpperCase();
+
+          processManager.moveStatus(id, newStatusUpper, justification);
+          ConsoleView.printSuccess(
+            `Processo ${id} movido para status ${newStatusUpper}`,
+          );
+          break;
+        }
+
+        case "4": {
+          ConsoleView.consoleClear();
+          ConsoleView.printHeader();
+
+          console.log("\nMÉTRICAS CORPORATIVAS: ");
+          console.table(processManager.getMetrics());
+          break;
+        }
+
+        case "5": {
+          ConsoleView.consoleClear();
+          ConsoleView.printHeader();
+
+          console.log("\nPROCESSOS ATRASADOS: ");
+          const delayedProcesses = processManager.getDelayedProcesses();
+
+          if (delayedProcesses.length === 0) {
+            console.log("\nNenhum processo atrasado encontrado.");
+          } else {
+            delayedProcesses.forEach((process) =>
+              ConsoleView.printProcess(process),
+            );
+          }
+          break;
+        }
+
+        case "6": {
+          ConsoleView.consoleClear();
+          ConsoleView.printHeader();
+          console.log("\nSaindo do ProcEngine CLI. Até logo!");
+          rl.close();
+          return;
+        }
+
+        default:
+          ConsoleView.printError("Opção inválida. Por favor, tente novamente.");
+      }
+    } catch (error) {
+      ConsoleView.printError(error.message);
+    }
   }
 }
+
+main();
