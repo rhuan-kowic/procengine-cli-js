@@ -52,4 +52,12 @@ export class ProcessManager {
       return acc;
     }, relatory);
   }
+
+  moveStatus(id, newStatus, justification) {
+    const process = this.#processes.find((proc) => proc.id === id);
+
+    if (!process) throw new Error("Processo não encontrado");
+
+    process.changeStatus(newStatus, justification);
+  }
 }
