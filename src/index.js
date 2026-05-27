@@ -61,7 +61,7 @@ async function main() {
 
           const id = await question("Digite o ID do processo: ");
           const newStatus = await question(
-            "Digite o novo status do processo (CANCELADO, EM_ANDAMENTO, CONCLUIDO): ",
+            "Digite o novo status do processo (CANCELADO, EM ANDAMENTO, CONCLUIDO): ",
           );
           const justification = await question(
             "Digite a justificativa para a mudança: ",
