@@ -1,4 +1,4 @@
-class ConsoleView {
+export class ConsoleView {
   static printHeader() {
     console.log("=============================================");
     console.log("       PROCENGINE ENTERPRISE CLI v1.0.1      ");
