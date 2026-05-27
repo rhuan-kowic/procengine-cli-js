@@ -15,7 +15,7 @@ export class ProcessManager {
       throw new Error("Título inválido");
 
     if (!Object.values(priorityProcess).includes(priority))
-      throw new Error("Status inválido");
+      throw new Error("Prioridade inválida");
 
     const process = new Process(title.trim(), priority);
     this.#processes.push(process);

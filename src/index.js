@@ -81,7 +81,7 @@ async function main() {
           ConsoleView.printHeader();
 
           console.log("\nMÉTRICAS CORPORATIVAS: ");
-          console.table(processManager.getMetrics());
+          console.table(processManager.getMetricsReport());
           break;
         }
 
@@ -90,7 +90,7 @@ async function main() {
           ConsoleView.printHeader();
 
           console.log("\nPROCESSOS ATRASADOS: ");
-          const delayedProcesses = processManager.getDelayedProcesses();
+          const delayedProcesses = processManager.findDelayed();
 
           if (delayedProcesses.length === 0) {
             console.log("\nNenhum processo atrasado encontrado.");
